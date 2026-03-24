@@ -69,10 +69,10 @@ export default function Home() {
       <AnimatePresence mode="wait">
         <motion.main
           key={product.id}
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95 }}
-          transition={{ duration: 0.6, ease: "easeInOut" }}
+          initial={{ opacity: 0, scale: 1.1, filter: "blur(15px)" }}
+          animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+          exit={{ opacity: 0, scale: 0.95, filter: "blur(10px)" }}
+          transition={{ duration: 2.2, ease: "easeOut" }}
           className="relative min-h-screen"
         >
           <ProductBottleScroll product={product} />

@@ -47,14 +47,25 @@ export default function ProductBottleScroll({ product }: Props) {
     let lastDrawnSrc = "";
     
     let currentProgress = scrollYProgress.get();
+    let autoPlayProgress = 0;
     let lastTime = performance.now();
 
     const render = (time: number) => {
       const dt = time - lastTime;
       lastTime = time;
       
-      const targetProgress = scrollYProgress.get();
-      const lerpFactor = 1 - Math.exp(-dt * 0.015);
+      const rawScroll = scrollYProgress.get();
+      
+      // Cinematic Slow-Motion Entrance (Autoplay)
+      // Slowly scrubs the first 12% of the sequence automatically until the user scrolls past it
+      if (rawScroll === 0 && autoPlayProgress < 0.12) {
+          autoPlayProgress += (dt * 0.00004); // Reduced playback speed for entrance
+      }
+      
+      const targetProgress = Math.max(rawScroll, autoPlayProgress);
+      
+      // Reduced playback rate smoothing for cinematic float
+      const lerpFactor = 1 - Math.exp(-dt * 0.010);
       currentProgress += (targetProgress - currentProgress) * lerpFactor;
       
       if (Math.abs(targetProgress - currentProgress) < 0.0001) {
@@ -126,7 +137,7 @@ export default function ProductBottleScroll({ product }: Props) {
   }, [images, scrollYProgress]);
 
   return (
-    <div ref={containerRef} className="relative h-[400vh] w-full" style={{ position: 'relative' }}>
+    <div ref={containerRef} className="relative h-[550vh] w-full" style={{ position: 'relative' }}>
       <div className="sticky top-0 h-[100dvh] w-full overflow-hidden flex items-center justify-center bg-black/10">
         <canvas 
             ref={canvasRef} 
