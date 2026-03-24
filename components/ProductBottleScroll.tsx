@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { useMotionValue, animate } from 'framer-motion';
+import { useScroll, useSpring } from 'framer-motion';
 import { Product } from '@/data/products';
 import ProductTextOverlays from './ProductTextOverlays';
 
@@ -14,18 +14,16 @@ export default function ProductBottleScroll({ product }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [images, setImages] = useState<HTMLImageElement[]>([]);
   
-  const animationProgress = useMotionValue(0);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"]
+  });
 
-  useEffect(() => {
-    animationProgress.set(0);
-    const controls = animate(animationProgress, 1, {
-      duration: 4.5, // Smooth cinematic timing 
-      ease: "linear",
-      repeat: Infinity,
-      repeatType: "mirror"
-    });
-    return () => controls.stop();
-  }, [product, animationProgress]);
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001
+  });
 
   // Preload images
   useEffect(() => {
@@ -55,7 +53,7 @@ export default function ProductBottleScroll({ product }: Props) {
     let lastDrawnSrc = "";
 
     const render = () => {
-      const progress = animationProgress.get();
+      const progress = smoothProgress.get();
       const frameCount = product.frameCount || 120;
       // Map progress 0-1 to frame 0-(frameCount-1)
       const frameIndex = Math.min(frameCount - 1, Math.max(0, Math.floor(progress * frameCount)));
@@ -106,15 +104,17 @@ export default function ProductBottleScroll({ product }: Props) {
     return () => {
       cancelAnimationFrame(animationFrameId);
     };
-  }, [images, animationProgress]);
+  }, [images, smoothProgress]);
 
   return (
-    <div ref={containerRef} className="relative h-screen w-full overflow-hidden flex items-center justify-center bg-black/10">
-      <canvas 
-          ref={canvasRef} 
-          className="absolute inset-0 w-full h-full object-cover z-10 pointer-events-none" 
-      />
-      <ProductTextOverlays product={product} progress={animationProgress} />
+    <div ref={containerRef} className="relative h-[500vh] w-full" style={{ position: 'relative' }}>
+      <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center bg-black/10">
+        <canvas 
+            ref={canvasRef} 
+            className="absolute inset-0 w-full h-full object-cover z-10 pointer-events-none" 
+        />
+        <ProductTextOverlays product={product} progress={smoothProgress} />
+      </div>
     </div>
   );
 }
