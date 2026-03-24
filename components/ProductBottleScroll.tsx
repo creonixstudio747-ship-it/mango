@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { useScroll } from 'framer-motion';
+import { useScroll, useSpring } from 'framer-motion';
 import { Product } from '@/data/products';
 import ProductTextOverlays from './ProductTextOverlays';
 
@@ -17,6 +17,14 @@ export default function ProductBottleScroll({ product }: Props) {
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"]
+  });
+
+  // Extremely tight spring interpolates chopped scroll signals (mobile touch gap) 
+  // without feeling delayed on laptop native scroll.
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 400,
+    damping: 40,
+    restDelta: 0.001
   });
 
   // Preload images
@@ -47,7 +55,7 @@ export default function ProductBottleScroll({ product }: Props) {
     let lastDrawnSrc = "";
 
     const render = () => {
-      const progress = scrollYProgress.get();
+      const progress = smoothProgress.get();
       const frameCount = product.frameCount || 120;
       // Map progress 0-1 to frame 0-(frameCount-1)
       const frameIndex = Math.min(frameCount - 1, Math.max(0, Math.floor(progress * frameCount)));
@@ -55,7 +63,15 @@ export default function ProductBottleScroll({ product }: Props) {
       const img = images[frameIndex];
       const dpr = window.devicePixelRatio || 1;
       
-      const canvasResized = (canvas.width !== window.innerWidth * dpr || canvas.height !== window.innerHeight * dpr);
+      const targetWidth = window.innerWidth * dpr;
+      const targetHeight = window.innerHeight * dpr;
+
+      // Ignore small vertical height changes (due to mobile URL bar disappearing/reappearing)
+      // This stops the canvas from clearing and jittering constantly during active touch scroll.
+      const widthChanged = canvas.width !== targetWidth;
+      const heightChanged = Math.abs(canvas.height - targetHeight) > 150;
+      
+      const canvasResized = widthChanged || heightChanged;
 
       // Skip draw if frame hasn't changed, is loaded, and screen hasn't resized
       if (!canvasResized && img && lastDrawnSrc === img.src && img.complete) {
@@ -64,8 +80,8 @@ export default function ProductBottleScroll({ product }: Props) {
       }
 
       if (canvasResized) {
-          canvas.width = window.innerWidth * dpr;
-          canvas.height = window.innerHeight * dpr;
+          canvas.width = targetWidth;
+          canvas.height = targetHeight;
           ctx.scale(dpr, dpr);
           ctx.imageSmoothingEnabled = true;
           ctx.imageSmoothingQuality = "high"; // Maximum resolution output
@@ -98,16 +114,16 @@ export default function ProductBottleScroll({ product }: Props) {
     return () => {
       cancelAnimationFrame(animationFrameId);
     };
-  }, [images, scrollYProgress]);
+  }, [images, smoothProgress]);
 
   return (
     <div ref={containerRef} className="relative h-[400vh] w-full" style={{ position: 'relative' }}>
-      <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center bg-black/10">
+      <div className="sticky top-0 h-[100dvh] w-full overflow-hidden flex items-center justify-center bg-black/10">
         <canvas 
             ref={canvasRef} 
             className="absolute inset-0 w-full h-full object-cover z-10 pointer-events-none" 
         />
-        <ProductTextOverlays product={product} progress={scrollYProgress} />
+        <ProductTextOverlays product={product} progress={smoothProgress} />
       </div>
     </div>
   );
