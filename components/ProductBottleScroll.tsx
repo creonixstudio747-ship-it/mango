@@ -101,7 +101,7 @@ export default function ProductBottleScroll({ product }: Props) {
   }, [images, scrollYProgress]);
 
   return (
-    <div ref={containerRef} className="relative h-[800vh] w-full" style={{ position: 'relative' }}>
+    <div ref={containerRef} className="relative h-[600vh] w-full" style={{ position: 'relative' }}>
       <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center bg-black/10">
         <canvas 
             ref={canvasRef} 
