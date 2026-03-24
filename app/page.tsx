@@ -83,11 +83,16 @@ export default function Home() {
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-100px" }}
-              className="md:w-1/2 relative h-96 rounded-3xl overflow-hidden bg-white/10 shadow-xl"
+              className="md:w-1/2 relative aspect-[4/3] rounded-[2rem] overflow-hidden bg-white/5 shadow-2xl group border-2 border-white/20"
             >
-              <div className="absolute inset-0 flex items-center justify-center text-white/30 text-xl font-bold bg-black/20 backdrop-blur-sm border border-white/10">
-                [Image: {product.detailsSection.imageAlt}]
-              </div>
+              <img 
+                src={`/images/${product.id}-details.jpg`}
+                alt={product.detailsSection.imageAlt}
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1553285991-4c7efbcadeaf?q=80&w=1000';
+                }}
+              />
             </motion.div>
             <motion.div 
               initial={{ opacity: 0, x: 50 }}
