@@ -118,8 +118,7 @@ export default function ProductBottleScroll({ product }: Props) {
       
       animationFrameId = requestAnimationFrame(render);
     };
-
-    render();
+    animationFrameId = requestAnimationFrame(render);
 
     return () => {
       cancelAnimationFrame(animationFrameId);
