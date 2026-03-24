@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { useScroll, useSpring } from 'framer-motion';
+import { useScroll } from 'framer-motion';
 import { Product } from '@/data/products';
 import ProductTextOverlays from './ProductTextOverlays';
 
@@ -17,14 +17,6 @@ export default function ProductBottleScroll({ product }: Props) {
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"]
-  });
-
-  // Extremely tight spring interpolates chopped scroll signals (mobile touch gap) 
-  // without feeling delayed on laptop native scroll.
-  const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 400,
-    damping: 40,
-    restDelta: 0.001
   });
 
   // Preload images
@@ -118,7 +110,7 @@ export default function ProductBottleScroll({ product }: Props) {
     return () => {
       cancelAnimationFrame(animationFrameId);
     };
-  }, [images, smoothProgress]);
+  }, [images, scrollYProgress]);
 
   return (
     <div ref={containerRef} className="relative h-[400vh] w-full" style={{ position: 'relative' }}>
@@ -127,7 +119,7 @@ export default function ProductBottleScroll({ product }: Props) {
             ref={canvasRef} 
             className="absolute inset-0 w-full h-full object-cover z-10 pointer-events-none" 
         />
-        <ProductTextOverlays product={product} progress={smoothProgress} />
+        <ProductTextOverlays product={product} progress={scrollYProgress} />
       </div>
     </div>
   );
