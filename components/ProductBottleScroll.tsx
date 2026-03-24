@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { useScroll } from 'framer-motion';
+import { useScroll, useMotionValue } from 'framer-motion';
 import { Product } from '@/data/products';
 import ProductTextOverlays from './ProductTextOverlays';
 
@@ -18,6 +18,8 @@ export default function ProductBottleScroll({ product }: Props) {
     target: containerRef,
     offset: ["start start", "end end"]
   });
+
+  const animatedProgress = useMotionValue(0);
 
   // Preload images
   useEffect(() => {
@@ -48,6 +50,7 @@ export default function ProductBottleScroll({ product }: Props) {
     
     let currentProgress = scrollYProgress.get();
     let autoPlayProgress = 0;
+    let pingPongDirection = 1;
     let lastTime = performance.now();
 
     const render = (time: number) => {
@@ -55,14 +58,30 @@ export default function ProductBottleScroll({ product }: Props) {
       lastTime = time;
       
       const rawScroll = scrollYProgress.get();
+      const rectWidth = canvas.width / (window.devicePixelRatio || 1);
+      const isMobile = rectWidth < 768; // Determine if we are on a mobile screen layout
       
-      // Cinematic Slow-Motion Entrance (Autoplay)
-      // Slowly scrubs the first 12% of the sequence automatically until the user scrolls past it
-      if (rawScroll === 0 && autoPlayProgress < 0.12) {
-          autoPlayProgress += (dt * 0.00004); // Reduced playback speed for entrance
+      let targetProgress = 0;
+
+      if (isMobile) {
+          // Dedicated Mobile Autoplay Loop (Ping-Pong completely independent of user scrolling)
+          autoPlayProgress += (dt * 0.0002) * pingPongDirection;
+          
+          if (autoPlayProgress >= 1) {
+              autoPlayProgress = 1;
+              pingPongDirection = -1;
+          } else if (autoPlayProgress <= 0) {
+              autoPlayProgress = 0;
+              pingPongDirection = 1;
+          }
+          targetProgress = autoPlayProgress;
+      } else {
+          // Cinematic Slow-Motion Entrance (Desktop)
+          if (rawScroll === 0 && autoPlayProgress < 0.12) {
+              autoPlayProgress += (dt * 0.00004); 
+          }
+          targetProgress = Math.max(rawScroll, autoPlayProgress);
       }
-      
-      const targetProgress = Math.max(rawScroll, autoPlayProgress);
       
       // Reduced playback rate smoothing for cinematic float
       const lerpFactor = 1 - Math.exp(-dt * 0.010);
@@ -71,6 +90,9 @@ export default function ProductBottleScroll({ product }: Props) {
       if (Math.abs(targetProgress - currentProgress) < 0.0001) {
          currentProgress = targetProgress;
       }
+      
+      // Sync mathematical progression to Framer Motion sequentially for all synchronized components
+      animatedProgress.set(currentProgress);
 
       const progress = currentProgress;
       const frameCount = product.frameCount || 120;
@@ -134,16 +156,16 @@ export default function ProductBottleScroll({ product }: Props) {
     return () => {
       cancelAnimationFrame(animationFrameId);
     };
-  }, [images, scrollYProgress]);
+  }, [images, scrollYProgress, animatedProgress]);
 
   return (
-    <div ref={containerRef} className="relative h-[550vh] w-full" style={{ position: 'relative' }}>
+    <div ref={containerRef} className="relative h-[100dvh] md:h-[550vh] w-full" style={{ position: 'relative' }}>
       <div className="sticky top-0 h-[100dvh] w-full overflow-hidden flex items-center justify-center bg-black/10">
         <canvas 
             ref={canvasRef} 
             className="absolute inset-0 w-full h-full object-cover z-10 pointer-events-none" 
         />
-        <ProductTextOverlays product={product} progress={scrollYProgress} />
+        <ProductTextOverlays product={product} progress={animatedProgress} />
       </div>
     </div>
   );
