@@ -40,14 +40,28 @@ export default function ProductBottleScroll({ product }: Props) {
     if (images.length === 0) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { alpha: false });
     if (!ctx) return;
 
     let animationFrameId: number;
     let lastDrawnSrc = "";
+    
+    let currentProgress = scrollYProgress.get();
+    let lastTime = performance.now();
 
-    const render = () => {
-      const progress = smoothProgress.get();
+    const render = (time: number) => {
+      const dt = time - lastTime;
+      lastTime = time;
+      
+      const targetProgress = scrollYProgress.get();
+      const lerpFactor = 1 - Math.exp(-dt * 0.015);
+      currentProgress += (targetProgress - currentProgress) * lerpFactor;
+      
+      if (Math.abs(targetProgress - currentProgress) < 0.0001) {
+         currentProgress = targetProgress;
+      }
+
+      const progress = currentProgress;
       const frameCount = product.frameCount || 120;
       // Map progress 0-1 to frame 0-(frameCount-1)
       const frameIndex = Math.min(frameCount - 1, Math.max(0, Math.floor(progress * frameCount)));
