@@ -36,25 +36,25 @@ export default function Home() {
       <Navbar />
 
       {/* Navigation Arrows */}
-      <div className="fixed top-1/2 left-8 md:left-12 z-50 transform -translate-y-1/2">
+      <div className="fixed top-1/2 left-2 md:left-12 z-50 transform -translate-y-1/2 scale-[0.6] md:scale-100 origin-left">
         <button onClick={prevProduct} className="p-4 rounded-full bg-[#f26522] text-white border-2 border-white hover:scale-110 transition-all cursor-pointer shadow-lg hover:shadow-xl">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
         </button>
       </div>
-      <div className="fixed top-1/2 right-8 md:right-12 z-50 transform -translate-y-1/2">
+      <div className="fixed top-1/2 right-2 md:right-12 z-50 transform -translate-y-1/2 scale-[0.6] md:scale-100 origin-right">
         <button onClick={nextProduct} className="p-4 rounded-full bg-[#f26522] text-white border-2 border-white hover:scale-110 transition-all cursor-pointer shadow-lg hover:shadow-xl">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6"/></svg>
         </button>
       </div>
 
       {/* Bottom Center Pill Menu */}
-      <div className="fixed bottom-10 left-1/2 transform -translate-x-1/2 z-50">
-        <div className="flex items-center gap-1 p-1 rounded-full bg-[#653308] shadow-2xl border border-white/10">
+      <div className="fixed bottom-6 md:bottom-10 left-1/2 transform -translate-x-1/2 z-50 w-[95%] sm:w-[80%] md:w-auto">
+        <div className="flex items-center justify-between md:justify-center gap-1 p-1 rounded-full bg-[#653308] shadow-2xl border border-white/10">
           {products.map((p, idx) => (
             <button
               key={p.id}
               onClick={() => setCurrentIndex(idx)}
-              className={`px-6 py-3 border-2 border-transparent rounded-full font-bold text-sm tracking-wide transition-all cursor-pointer ${
+              className={`px-3 py-2 md:px-6 md:py-3 border-2 border-transparent rounded-full font-bold text-[11px] md:text-sm tracking-wide transition-all cursor-pointer flex-1 md:flex-none text-center whitespace-nowrap ${
                 currentIndex === idx 
                   ? 'bg-white text-[#d65f12] shadow-sm' 
                   : 'text-white hover:text-white/80'

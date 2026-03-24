@@ -39,7 +39,7 @@ export default function Navbar() {
 
         {/* Right Button */}
         <div>
-          <button className="px-6 py-2.5 rounded-full bg-[#0d1b2a] text-white font-bold text-xs tracking-widest hover:scale-105 hover:bg-black transition-all">
+          <button className="px-4 py-2 md:px-6 md:py-2.5 rounded-full bg-[#0d1b2a] text-white font-bold text-[10px] md:text-xs tracking-widest hover:scale-105 hover:bg-black transition-all whitespace-nowrap">
             ORDER NOW
           </button>
         </div>

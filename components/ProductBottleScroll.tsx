@@ -44,6 +44,7 @@ export default function ProductBottleScroll({ product }: Props) {
     if (!ctx) return;
 
     let animationFrameId: number;
+    let lastDrawnSrc = "";
 
     const render = () => {
       const progress = scrollYProgress.get();
@@ -52,24 +53,32 @@ export default function ProductBottleScroll({ product }: Props) {
       const frameIndex = Math.min(frameCount - 1, Math.max(0, Math.floor(progress * frameCount)));
       
       const img = images[frameIndex];
+      const dpr = window.devicePixelRatio || 1;
+      
+      const canvasResized = (canvas.width !== window.innerWidth * dpr || canvas.height !== window.innerHeight * dpr);
+
+      // Skip draw if frame hasn't changed, is loaded, and screen hasn't resized
+      if (!canvasResized && img && lastDrawnSrc === img.src && img.complete) {
+          animationFrameId = requestAnimationFrame(render);
+          return;
+      }
+
+      if (canvasResized) {
+          canvas.width = window.innerWidth * dpr;
+          canvas.height = window.innerHeight * dpr;
+          ctx.scale(dpr, dpr);
+      }
+
       // Only draw if image is valid
       if (img && img.complete && img.naturalWidth > 0) {
-        // Ensure high-DPI canvas
-        const dpr = window.devicePixelRatio || 1;
-        
-        // Only resize DOM logic if window resizes, but simpler to check here
-        if (canvas.width !== window.innerWidth * dpr || canvas.height !== window.innerHeight * dpr) {
-            canvas.width = window.innerWidth * dpr;
-            canvas.height = window.innerHeight * dpr;
-            ctx.scale(dpr, dpr);
-        }
+        lastDrawnSrc = img.src;
 
         const rect = canvas.getBoundingClientRect();
         
-        // contain fit logic
+        // Use cover-fit logic for mobile professionalism (fill screen context)
         const hRatio = rect.width / img.width;
         const vRatio = rect.height / img.height;
-        const ratio = Math.min(hRatio, vRatio);
+        const ratio = Math.max(hRatio, vRatio); // Changed from 'min' to 'max' for cover
         
         const centerShift_x = (rect.width - img.width * ratio) / 2;
         const centerShift_y = (rect.height - img.height * ratio) / 2;  

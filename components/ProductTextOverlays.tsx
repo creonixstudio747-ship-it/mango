@@ -32,12 +32,12 @@ export default function ProductTextOverlays({ product, scrollYProgress }: Props)
         {/* Section 1 */}
         <motion.div 
           style={{ opacity: opacity1, y: y1 }}
-          className="absolute top-[30%] left-6 md:left-20 max-w-lg transform -translate-y-1/2"
+          className="absolute top-[25%] md:top-[30%] left-4 md:left-20 max-w-sm md:max-w-lg transform -translate-y-1/2"
         >
-          <h1 className="text-6xl md:text-[5rem] leading-[1.1] font-black mb-6 tracking-tighter text-white drop-shadow-2xl saturate-150">
+          <h1 className="text-4xl md:text-[5rem] leading-[1.1] font-black mb-4 md:mb-6 tracking-tighter text-white drop-shadow-2xl saturate-150">
             {product.section1.title}
           </h1>
-          <p className="text-xl md:text-2xl text-white/95 font-medium drop-shadow-lg max-w-sm">
+          <p className="text-lg md:text-2xl text-white/95 font-medium drop-shadow-lg max-w-[16rem] md:max-w-sm leading-tight">
             {product.section1.subtitle}
           </p>
         </motion.div>
@@ -45,12 +45,12 @@ export default function ProductTextOverlays({ product, scrollYProgress }: Props)
         {/* Section 2 */}
         <motion.div 
           style={{ opacity: opacity2, y: y2 }}
-          className="absolute top-[40%] right-6 md:right-32 max-w-md text-right transform -translate-y-1/2"
+          className="absolute top-[35%] md:top-[40%] right-4 md:right-32 max-w-[16rem] md:max-w-md text-right transform -translate-y-1/2"
         >
-          <h2 className="text-5xl md:text-7xl leading-[1.1] font-black mb-6 tracking-tight text-white drop-shadow-2xl">
+          <h2 className="text-3xl md:text-7xl leading-[1.1] font-black mb-4 md:mb-6 tracking-tight text-white drop-shadow-2xl">
             {product.section2.title}
           </h2>
-          <p className="text-lg md:text-xl text-white/90 drop-shadow-lg ml-auto max-w-xs">
+          <p className="text-sm md:text-xl text-white/90 drop-shadow-lg ml-auto max-w-[12rem] md:max-w-xs leading-snug">
             {product.section2.subtitle}
           </p>
         </motion.div>
@@ -58,12 +58,12 @@ export default function ProductTextOverlays({ product, scrollYProgress }: Props)
         {/* Section 3 */}
         <motion.div 
           style={{ opacity: opacity3, y: y3 }}
-          className="absolute top-[50%] right-6 md:right-32 max-w-lg text-right transform -translate-y-1/2"
+          className="absolute top-[45%] md:top-[50%] right-4 md:right-32 max-w-[16rem] md:max-w-lg text-right transform -translate-y-1/2"
         >
-          <h2 className="text-5xl md:text-7xl leading-[1.1] font-black mb-6 tracking-tight text-white drop-shadow-2xl">
+          <h2 className="text-3xl md:text-7xl leading-[1.1] font-black mb-4 md:mb-6 tracking-tight text-white drop-shadow-2xl">
             {product.section3.title}
           </h2>
-          <p className="text-lg md:text-xl text-white/90 drop-shadow-lg ml-auto max-w-sm">
+          <p className="text-sm md:text-xl text-white/90 drop-shadow-lg ml-auto max-w-[14rem] md:max-w-sm leading-snug">
             {product.section3.subtitle}
           </p>
         </motion.div>
