@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { useScroll } from 'framer-motion';
+import { useMotionValue, animate } from 'framer-motion';
 import { Product } from '@/data/products';
 import ProductTextOverlays from './ProductTextOverlays';
 
@@ -14,10 +14,16 @@ export default function ProductBottleScroll({ product }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [images, setImages] = useState<HTMLImageElement[]>([]);
   
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"]
-  });
+  const animationProgress = useMotionValue(0);
+
+  useEffect(() => {
+    animationProgress.set(0);
+    const controls = animate(animationProgress, 1, {
+      duration: 4.5, // Smooth cinematic timing 
+      ease: "linear",
+    });
+    return () => controls.stop();
+  }, [product, animationProgress]);
 
   // Preload images
   useEffect(() => {
@@ -47,7 +53,7 @@ export default function ProductBottleScroll({ product }: Props) {
     let lastDrawnSrc = "";
 
     const render = () => {
-      const progress = scrollYProgress.get();
+      const progress = animationProgress.get();
       const frameCount = product.frameCount || 120;
       // Map progress 0-1 to frame 0-(frameCount-1)
       const frameIndex = Math.min(frameCount - 1, Math.max(0, Math.floor(progress * frameCount)));
@@ -67,6 +73,8 @@ export default function ProductBottleScroll({ product }: Props) {
           canvas.width = window.innerWidth * dpr;
           canvas.height = window.innerHeight * dpr;
           ctx.scale(dpr, dpr);
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = "high"; // Maximum resolution output
       }
 
       // Only draw if image is valid
@@ -96,18 +104,15 @@ export default function ProductBottleScroll({ product }: Props) {
     return () => {
       cancelAnimationFrame(animationFrameId);
     };
-  }, [images, scrollYProgress]);
+  }, [images, animationProgress]);
 
   return (
-    <div ref={containerRef} className="relative h-[500vh] w-full" style={{ position: 'relative' }}>
-      <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center">
-        <canvas 
-            ref={canvasRef} 
-            className="w-full h-full object-contain z-10" 
-            style={{ width: '100vw', height: '100vh' }}
-        />
-        <ProductTextOverlays product={product} scrollYProgress={scrollYProgress} />
-      </div>
+    <div ref={containerRef} className="relative h-screen w-full overflow-hidden flex items-center justify-center bg-black/10">
+      <canvas 
+          ref={canvasRef} 
+          className="absolute inset-0 w-full h-full object-cover z-10 pointer-events-none" 
+      />
+      <ProductTextOverlays product={product} progress={animationProgress} />
     </div>
   );
 }

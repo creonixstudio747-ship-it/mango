@@ -6,25 +6,25 @@ import { Product } from '@/data/products';
 
 interface Props {
   product: Product;
-  scrollYProgress: MotionValue<number>;
+  progress: MotionValue<number>;
 }
 
-export default function ProductTextOverlays({ product, scrollYProgress }: Props) {
+export default function ProductTextOverlays({ product, progress }: Props) {
   // Section 1: 0 to 0.2 (fade out at 0.2)
-  const opacity1 = useTransform(scrollYProgress, [0, 0.1, 0.2], [1, 1, 0]);
-  const y1 = useTransform(scrollYProgress, [0, 0.2], [0, -50]);
+  const opacity1 = useTransform(progress, [0, 0.1, 0.2], [1, 1, 0]);
+  const y1 = useTransform(progress, [0, 0.2], [0, -50]);
 
   // Section 2: 0.2 to 0.45 (fade in at 0.2, fade out at 0.45)
-  const opacity2 = useTransform(scrollYProgress, [0.2, 0.25, 0.35, 0.45], [0, 1, 1, 0]);
-  const y2 = useTransform(scrollYProgress, [0.2, 0.35, 0.45], [50, 0, -50]);
+  const opacity2 = useTransform(progress, [0.2, 0.25, 0.35, 0.45], [0, 1, 1, 0]);
+  const y2 = useTransform(progress, [0.2, 0.35, 0.45], [50, 0, -50]);
 
   // Section 3: 0.45 to 0.7 (fade in at 0.45, fade out at 0.7)
-  const opacity3 = useTransform(scrollYProgress, [0.45, 0.5, 0.6, 0.7], [0, 1, 1, 0]);
-  const y3 = useTransform(scrollYProgress, [0.45, 0.6, 0.7], [50, 0, -50]);
+  const opacity3 = useTransform(progress, [0.45, 0.5, 0.6, 0.7], [0, 1, 1, 0]);
+  const y3 = useTransform(progress, [0.45, 0.6, 0.7], [50, 0, -50]);
 
   // Section 4: 0.7 to 1.0 (fade in at 0.7, stay till end)
-  const opacity4 = useTransform(scrollYProgress, [0.7, 0.8, 1], [0, 1, 1]);
-  const y4 = useTransform(scrollYProgress, [0.7, 0.85, 1], [50, 0, 0]);
+  const opacity4 = useTransform(progress, [0.7, 0.8, 1], [0, 1, 1]);
+  const y4 = useTransform(progress, [0.7, 0.85, 1], [50, 0, 0]);
 
   return (
     <div className="absolute inset-0 pointer-events-none z-20">
