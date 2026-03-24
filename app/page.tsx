@@ -35,13 +35,13 @@ export default function Home() {
       
       <Navbar />
 
-      {/* Navigation Arrows */}
-      <div className="fixed top-1/2 left-2 md:left-12 z-50 transform -translate-y-1/2 scale-[0.6] md:scale-100 origin-left">
+      {/* Navigation Arrows - Distinct Desktop UI (Hidden on mobile for cleaner tailored UX) */}
+      <div className="hidden md:block fixed top-1/2 left-12 z-50 transform -translate-y-1/2 origin-left">
         <button onClick={prevProduct} className="p-4 rounded-full bg-[#f26522] text-white border-2 border-white hover:scale-110 transition-all cursor-pointer shadow-lg hover:shadow-xl">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
         </button>
       </div>
-      <div className="fixed top-1/2 right-2 md:right-12 z-50 transform -translate-y-1/2 scale-[0.6] md:scale-100 origin-right">
+      <div className="hidden md:block fixed top-1/2 right-12 z-50 transform -translate-y-1/2 origin-right">
         <button onClick={nextProduct} className="p-4 rounded-full bg-[#f26522] text-white border-2 border-white hover:scale-110 transition-all cursor-pointer shadow-lg hover:shadow-xl">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6"/></svg>
         </button>

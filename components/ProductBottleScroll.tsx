@@ -91,17 +91,21 @@ export default function ProductBottleScroll({ product }: Props) {
       if (img && img.complete && img.naturalWidth > 0) {
         lastDrawnSrc = img.src;
 
-        const rect = canvas.getBoundingClientRect();
+        // ELIMINATE LAYOUT THRASHING: Removing getBoundingClientRect ensures 100% fluid 60FPS
+        const rectWidth = canvas.width / dpr;
+        const rectHeight = canvas.height / dpr;
         
         // Use cover-fit logic for mobile professionalism (fill screen context)
-        const hRatio = rect.width / img.width;
-        const vRatio = rect.height / img.height;
-        const ratio = Math.max(hRatio, vRatio); // Changed from 'min' to 'max' for cover
+        // Differentiate desktop and mobile scaling if needed
+        const isMobile = rectWidth < 768;
+        const hRatio = rectWidth / img.width;
+        const vRatio = rectHeight / img.height;
+        const ratio = isMobile ? Math.max(hRatio, vRatio) : Math.max(hRatio, vRatio);
         
-        const centerShift_x = (rect.width - img.width * ratio) / 2;
-        const centerShift_y = (rect.height - img.height * ratio) / 2;  
+        const centerShift_x = (rectWidth - img.width * ratio) / 2;
+        const centerShift_y = (rectHeight - img.height * ratio) / 2;  
 
-        ctx.clearRect(0,0, rect.width, rect.height);
+        ctx.clearRect(0, 0, rectWidth, rectHeight);
         ctx.drawImage(img, 0,0, img.width, img.height,
                       centerShift_x, centerShift_y, img.width * ratio, img.height * ratio);
       }
