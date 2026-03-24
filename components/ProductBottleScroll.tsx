@@ -21,6 +21,8 @@ export default function ProductBottleScroll({ product }: Props) {
     const controls = animate(animationProgress, 1, {
       duration: 4.5, // Smooth cinematic timing 
       ease: "linear",
+      repeat: Infinity,
+      repeatType: "mirror"
     });
     return () => controls.stop();
   }, [product, animationProgress]);
