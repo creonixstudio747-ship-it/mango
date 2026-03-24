@@ -21,27 +21,18 @@ export default function ProductBottleScroll({ product }: Props) {
 
   // Preload images
   useEffect(() => {
-    let isMounted = true;
-    const loadImages = async () => {
-      const loadedImages: HTMLImageElement[] = [];
-      const frameCount = product.frameCount || 120;
-      const extension = product.extension || 'webp';
-      
-      for (let i = 1; i <= frameCount; i++) {
-        const img = new Image();
-        img.src = `${product.folderPath}/${i}.${extension}`;
-        await new Promise((resolve) => {
-          img.onload = resolve;
-          img.onerror = resolve; // Continue even if missing to not block
-        });
-        loadedImages.push(img);
-      }
-      if (isMounted) {
-        setImages(loadedImages);
-      }
-    };
-    loadImages();
-    return () => { isMounted = false; };
+    const loadedImages: HTMLImageElement[] = [];
+    const frameCount = product.frameCount || 120;
+    const extension = product.extension || 'webp';
+    
+    for (let i = 1; i <= frameCount; i++) {
+      const img = new Image();
+      // Instantly start fetching in background
+      img.src = `${product.folderPath}/${i}.${extension}`;
+      // Browsers will handle HTTP multiplexing
+      loadedImages.push(img);
+    }
+    setImages(loadedImages);
   }, [product.folderPath, product.frameCount, product.extension]);
 
   // Draw frame on canvas
